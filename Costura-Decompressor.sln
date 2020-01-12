@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29230.47
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Costura-Decompressor", "Costura-Decompressor.csproj", "{C8DCF752-7D9D-480E-8585-4C46FF6AD861}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{C8DCF752-7D9D-480E-8585-4C46FF6AD861}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C8DCF752-7D9D-480E-8585-4C46FF6AD861}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C8DCF752-7D9D-480E-8585-4C46FF6AD861}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C8DCF752-7D9D-480E-8585-4C46FF6AD861}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {A4DEA7D4-8931-4B0F-8D3B-74D6E99C5F43}
+	EndGlobalSection
+EndGlobal
