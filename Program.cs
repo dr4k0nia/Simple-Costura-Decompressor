@@ -1,16 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.IO;
 using System.IO.Compression;
 
 namespace Costura_Decompressor
 {
-    class Program
+    internal class Program
     {
-        static void Main(string[] args)
+        private static void Main(string[] args)
         {
             if (args.Length == 0)
             {
@@ -19,6 +15,12 @@ namespace Costura_Decompressor
             }
 
             FileInfo _inputToDecompress = new FileInfo(args[0]);
+
+            if (!_inputToDecompress.Extension.Equals("compressed"))
+            {
+                Console.WriteLine("invalid file type");
+                return;
+            }
 
             using (var inputFileStream = File.OpenRead(args[0]))
             {
