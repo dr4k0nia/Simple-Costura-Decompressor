@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.IO.Compression;
+using System.Reflection;
 
 namespace Costura_Decompressor
 {
@@ -8,34 +9,49 @@ namespace Costura_Decompressor
     {
         private static void Main(string[] args)
         {
+            Console.Title = "Cosutra-Decompressor";
+
             if (args.Length == 0)
             {
-                Console.WriteLine("Drag a file onto the exe");
+                Console.WriteLine("Usage: Costura-Decompressor file1 file2 ...");
+                Console.ReadKey();
                 return;
             }
 
-            FileInfo _inputToDecompress = new FileInfo(args[0]);
-
-            if (!_inputToDecompress.Extension.Equals("compressed"))
+            for (int i = 0; i < args.Length; i++)
             {
-                Console.WriteLine("invalid file type");
-                return;
-            }
-
-            using (var inputFileStream = File.OpenRead(args[0]))
-            {
-                var inputFileName = _inputToDecompress.FullName.ToString();
-                var outputFileName = inputFileName.Remove(inputFileName.Length - _inputToDecompress.Extension.Length);
-
-                using (var outputFileStream = File.Create(outputFileName))
+                string inputFile = ResolveFilePath(args[i]);
+                if (string.IsNullOrEmpty(inputFile) || !inputFile.Contains(".compressed"))
                 {
-                    using (var decompressionStream = new DeflateStream(inputFileStream, CompressionMode.Decompress))
-                    {
-                        decompressionStream.CopyTo(outputFileStream);
-                        Console.WriteLine("Done");
-                    }
+                    throw new Exception("[Error] Invalid file:" + args[i]);
                 }
+
+                string inputFileName = Path.GetFileName(inputFile);
+                byte[] buffer = Decompress(File.ReadAllBytes(inputFile));
+                string outputFileName = inputFile.Remove(inputFile.Length - ".compressed".Length);
+                File.WriteAllBytes(outputFileName, buffer);
+                Console.WriteLine("Decompressed file: " + args[i]);
             }
+        }
+
+        private static byte[] Decompress(byte[] input)
+        {
+            MemoryStream inputstream = new MemoryStream(input);
+            MemoryStream output = new MemoryStream();
+            using (DeflateStream deflatestream = new DeflateStream(inputstream, CompressionMode.Decompress))
+            {
+                deflatestream.CopyTo(output);
+            }
+            return output.ToArray();
+        }
+
+        private static string ResolveFilePath(string filepath)
+        {
+            if (File.Exists(filepath))
+            {
+                return filepath;
+            }
+            return string.Empty;
         }
     }
 }
