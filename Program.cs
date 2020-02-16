@@ -15,7 +15,7 @@ namespace Costura_Decompressor
 
             if (args.Length == 0)
             {
-                Console.WriteLine("Usage: Costura-Decompressor file1.exe file2.dll.compressed ...");
+                Console.WriteLine("Usage: Costura-Decompressor.exe file1.exe file2.dll.compressed ...");
                 Console.ReadKey();
                 return;
             }
@@ -112,11 +112,6 @@ namespace Costura_Decompressor
             using (FileStream bufferStream = File.OpenRead(inputFile))
                 File.WriteAllBytes(outputFileName, DecompressResource(bufferStream).ToArray());
             WriteFormattedOutput("Decompressed costura file", outputFileName, Color.White, Color.Yellow);
-        }
-
-        private static void ExractAndDecompress(string inputFile)
-        {
-
         }
 
         private static MemoryStream DecompressResource(Stream input)
