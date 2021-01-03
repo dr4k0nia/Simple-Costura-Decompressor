@@ -9,11 +9,10 @@ Using command line arguments:
 The tool supports executable files with costura processed resources and the compressed resources as single files which can be extracted using tools like dnSpy, ILSpy etc.
 
 Output looks like this:
-![example output](https://i.imgur.com/Fcl2EMi.png)
+![example output](https://i.imgur.com/0bOrPqe.png)
 
 You can also just drag the file you want to decompress or extract and decompress resources from onto the executable.
 
 ## Dependencies
 - dnlib using [nuget package v3.3.1](https://www.nuget.org/packages/dnlib/)
 - Colorful.Console using [nuget package v1.2.10](https://www.nuget.org/packages/Colorful.Console/1.2.10)
-- Costura using [nuget package v4.1.0](https://www.nuget.org/packages/Costura.Fody/4.1.0) (Yeah the Costura Decompressor is using Costura 👀)
