@@ -14,5 +14,5 @@ Output looks like this:
 You can also just drag the file you want to decompress or extract and decompress resources from onto the executable.
 
 ## Dependencies
-- dnlib using [nuget package v3.3.1](https://www.nuget.org/packages/dnlib/)
-- Colorful.Console using [nuget package v1.2.10](https://www.nuget.org/packages/Colorful.Console/1.2.10)
+- AsmResolver
+- Colorful.Console
