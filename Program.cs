@@ -1,7 +1,8 @@
-﻿using System.IO;
-using Colorful;
-using dnlib.DotNet;
+﻿using System;
+using System.IO;
+using AsmResolver.DotNet;
 using static Costura_Decompressor.Logger;
+using Console = Colorful.Console;
 
 namespace Costura_Decompressor
 {
@@ -25,25 +26,37 @@ namespace Costura_Decompressor
                 }
 
                 //Check if the file is an executable
-                if ( inputFile.EndsWith( ".exe" ) )
+                if (inputFile.EndsWith(".exe"))
                 {
-                    try
-                    {
-                        var extractor = new Extractor(ModuleDefMD.Load( inputFile ));
-                        extractor.SaveResources();
-                    }
-                    catch
-                    {
-                        Log( "Failed to load module, make sure you are inputting a valid .net module", LogType.Error ); 
-                    }
+                    ProcessExecutable(inputFile);
+                    continue;
                 }
-                else if ( inputFile.EndsWith( ".compressed" ) )
+
+
+                if (inputFile.EndsWith(".compressed"))
+                {
                     inputFile.ProcessCompressedFile();
-                else
-                    Log( $"Unsupported file extension, accepts .exe or .compressed", LogType.Error );
+                    continue;
+                }
+
+                Log( $"Unsupported file extension, accepts .exe or .compressed", LogType.Error );
             }
 
             Console.ReadKey();
+        }
+
+        private static void ProcessExecutable(string inputFile)
+        {
+            try
+            {
+                var module = ModuleDefinition.FromFile(inputFile);
+                var extractor = new ExtractorNew(module);
+                extractor.Run();
+            }
+            catch(Exception e)
+            {
+                Error(e.Message);
+            }
         }
     }
 }

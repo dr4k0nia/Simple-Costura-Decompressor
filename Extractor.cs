@@ -1,68 +1,83 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
-using dnlib.DotNet;
-using static Costura_Decompressor.Logger;
+using AsmResolver.DotNet;
 
 namespace Costura_Decompressor
 {
-    public class Extractor
+    public class ExtractorNew
     {
-        private readonly Dictionary<byte[], string> _extractedResources = new Dictionary<byte[], string>();
-        private readonly string _outputDirectory;
+        private readonly ModuleDefinition _module;
 
-        public Extractor( ModuleDef module )
+        private readonly string _outputPath;
+
+        public ExtractorNew(ModuleDefinition module)
         {
-            Log( $"Processing module: {module.FullName}", LogType.Info  );
-            
-            _outputDirectory = module.Location.Remove( module.Location.Length - module.FullName.Length ) +
-                               module.Assembly.Name + @"-decompressed-resources\";
+            _module = module;
+            _outputPath = module.GetOutputPath();
+        }
 
-            //Check if module has resources
-            if ( !module.HasResources )
+        public void Run()
+        {
+            if (ExtractResources(out var resources))
             {
-                Log( $"Could not find any embedded resources", LogType.Error );
+                SaveResources(resources);
                 return;
             }
+            
+            Logger.Error("Could not find or extract costura embedded resources");
+        }
 
-            //Get all resources
-            foreach ( var resource in module.Resources )
+        private bool ExtractResources(out Dictionary<byte[], string> resources)
+        {
+            resources = new Dictionary<byte[], string>();
+            
+            if (_module.Resources.Count == 0)
+                return false;
+
+            foreach (var resource in _module.Resources)
             {
-                if ( resource.Name.Length < 19 )
+                if (!resource.IsEmbedded)
                     continue;
                 
-                //Check loaded module for costura resources
-                if ( !resource.Name.StartsWith( "costura." ) && !resource.Name.EndsWith( ".compressed" ) )
+                string name = resource.Name;
+                
+                if (name.Length < 19)
                     continue;
 
-                var er = module.Resources.FindEmbeddedResource( resource.Name );
-                //decompress extracted resource
-                var reader = er.CreateReader();
-                string name = resource.Name.Substring( 8,
-                    resource.Name.LastIndexOf( ".compressed" ) -
-                    8 ); 
-                using ( var bufferStream = reader.AsStream() )
-                    _extractedResources.Add( bufferStream.DecompressResource(), name );
-                Log( $"Extracted resource: {name}", LogType.Success );
+                if (!name.StartsWith("costura.") || !name.EndsWith(".compressed"))
+                    continue;
+                
+                // Strip costura. and .compressed from the resource name
+                name = name.Substring(8, name.LastIndexOf(".compressed") - 8);
+
+                byte[] data = resource.GetData();
+
+                data.Decompress();
+
+                if (data != null) 
+                    resources.Add(data, name);
+                
+                Logger.Success($"Extracted costura resource {name}");
             }
 
-            if ( _extractedResources.Count == 0 )
-                Log( $"Could not find costura embedded resource in module: {module.FullName}", LogType.Error );
+            return resources.Count != 0;
         }
 
-        public void SaveResources()
+        private void SaveResources(Dictionary<byte[], string> extractedResources)
         {
-            if ( _extractedResources.Count == 0 )
-                return;
-
-            if ( !Directory.Exists( _outputDirectory ) )
-                Directory.CreateDirectory( _outputDirectory );
+            if (!Directory.Exists(_outputPath))
+                Directory.CreateDirectory(_outputPath);
             
-            foreach ( var resource in _extractedResources )
+            foreach (var entry in extractedResources)
             {
-                File.WriteAllBytes( _outputDirectory + resource.Value, resource.Key);
+                string fullPath = Path.Combine(_outputPath, entry.Value);
+                File.WriteAllBytes(fullPath, entry.Key);
             }
-
-            Log( $"Extracted and saved {_extractedResources.Count} decompressed resources", LogType.Info );
+            
+            Logger.Info($"Saved {extractedResources.Count} extracted Resources to {_outputPath}");
         }
+        
+        
     }
 }

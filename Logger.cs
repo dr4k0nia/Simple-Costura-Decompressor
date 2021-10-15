@@ -47,6 +47,13 @@ namespace Costura_Decompressor
             }
         }
 
+        public static void Success(string message) => Log(message, LogType.Success);
+        
+        public static void Error(string message) => Log(message, LogType.Error);
+        
+        public static void Info(string message) => Log(message, LogType.Info);
+        
+
         public enum LogType
         {
             Success = 0,
