@@ -7,52 +7,52 @@ namespace Costura_Decompressor
 {
     public static class Logger
     {
-        public static void Log( string text, LogType type )
+        public static void Log(string text, LogType type)
         {
             const string template = "{0} {1}";
-            switch ( type )
+            switch (type)
             {
                 case LogType.Success:
                 {
                     Formatter[] success =
                     {
-                        new Formatter( "[>]", Color.Yellow ),
-                        new Formatter( text, Color.White )
+                        new Formatter("[>]", Color.Yellow),
+                        new Formatter(text, Color.White)
                     };
-                    Console.WriteLineFormatted( template, Color.Gray, success );
+                    Console.WriteLineFormatted(template, Color.Gray, success);
                     break;
                 }
                 case LogType.Info:
                 {
                     Formatter[] info =
                     {
-                        new Formatter( "[i]", Color.DodgerBlue ),
-                        new Formatter( text, Color.White )
+                        new Formatter("[i]", Color.DodgerBlue),
+                        new Formatter(text, Color.White)
                     };
-                    Console.WriteLineFormatted( template, Color.Gray, info );
+                    Console.WriteLineFormatted(template, Color.Gray, info);
                     break;
                 }
                 case LogType.Error:
                 {
                     Formatter[] error =
                     {
-                        new Formatter( "[error]", Color.Red ),
-                        new Formatter( text, Color.Crimson )
+                        new Formatter("[error]", Color.Red),
+                        new Formatter(text, Color.Crimson)
                     };
-                    Console.WriteLineFormatted( template, Color.Gray, error );
+                    Console.WriteLineFormatted(template, Color.Gray, error);
                     break;
                 }
                 default:
-                    throw new ArgumentOutOfRangeException( nameof(type), type, null );
+                    throw new ArgumentOutOfRangeException(nameof(type), type, null);
             }
         }
 
         public static void Success(string message) => Log(message, LogType.Success);
-        
+
         public static void Error(string message) => Log(message, LogType.Error);
-        
+
         public static void Info(string message) => Log(message, LogType.Info);
-        
+
 
         public enum LogType
         {
