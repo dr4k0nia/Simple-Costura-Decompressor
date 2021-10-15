@@ -24,14 +24,14 @@ namespace Costura_Decompressor
                 SaveResources(resources);
                 return;
             }
-            
+
             Logger.Error("Could not find or extract costura embedded resources");
         }
 
         private bool ExtractResources(out Dictionary<byte[], string> resources)
         {
             resources = new Dictionary<byte[], string>();
-            
+
             if (_module.Resources.Count == 0)
                 return false;
 
@@ -39,15 +39,15 @@ namespace Costura_Decompressor
             {
                 if (!resource.IsEmbedded)
                     continue;
-                
+
                 string name = resource.Name;
-                
+
                 if (name.Length < 19)
                     continue;
 
                 if (!name.StartsWith("costura.") || !name.EndsWith(".compressed"))
                     continue;
-                
+
                 // Strip costura. and .compressed from the resource name
                 name = name.Substring(8, name.LastIndexOf(".compressed") - 8);
 
@@ -55,9 +55,9 @@ namespace Costura_Decompressor
 
                 data.Decompress();
 
-                if (data != null) 
+                if (data != null)
                     resources.Add(data, name);
-                
+
                 Logger.Success($"Extracted costura resource {name}");
             }
 
@@ -68,16 +68,14 @@ namespace Costura_Decompressor
         {
             if (!Directory.Exists(_outputPath))
                 Directory.CreateDirectory(_outputPath);
-            
+
             foreach (var entry in extractedResources)
             {
                 string fullPath = Path.Combine(_outputPath, entry.Value);
                 File.WriteAllBytes(fullPath, entry.Key);
             }
-            
+
             Logger.Info($"Saved {extractedResources.Count} extracted Resources to {_outputPath}");
         }
-        
-        
     }
 }
