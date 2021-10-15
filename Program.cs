@@ -1,32 +1,31 @@
 ﻿using System;
 using System.IO;
 using AsmResolver.DotNet;
-using static Costura_Decompressor.Logger;
 using Console = Colorful.Console;
 
 namespace Costura_Decompressor
 {
     internal static class Program
     {
-        private static void Main( string[] args )
+        private static void Main(string[] args)
         {
-            if ( args.Length == 0 )
+            if (args.Length == 0)
             {
-                Console.WriteLine( "Usage: Costura-Decompressor.exe <file1.exe> <file2.dll.compressed> ..." );
+                Console.WriteLine("Usage: Costura-Decompressor.exe <file1.exe> <file2.dll.compressed> ...");
                 Console.ReadKey();
                 return;
             }
 
-            foreach ( string inputFile in args )
+            foreach (string inputFile in args)
             {
-                if ( !File.Exists( inputFile ) )
+                if (!File.Exists(inputFile))
                 {
-                    Log( $"File not found: {inputFile}", LogType.Error );
+                    Logger.Error($"File not found: {inputFile}");
                     continue;
                 }
 
                 //Check if the file is an executable
-                if (inputFile.EndsWith(".exe"))
+                if (Path.GetExtension(inputFile) == ".exe")
                 {
                     ProcessExecutable(inputFile);
                     continue;
@@ -39,7 +38,7 @@ namespace Costura_Decompressor
                     continue;
                 }
 
-                Log( $"Unsupported file extension, accepts .exe or .compressed", LogType.Error );
+                Logger.Error("Unsupported file extension, accepts .exe or .compressed");
             }
 
             Console.ReadKey();
@@ -47,15 +46,16 @@ namespace Costura_Decompressor
 
         private static void ProcessExecutable(string inputFile)
         {
+            Logger.Info($"Processing executable: {Path.GetFileName(inputFile)}");
             try
             {
                 var module = ModuleDefinition.FromFile(inputFile);
                 var extractor = new ExtractorNew(module);
                 extractor.Run();
             }
-            catch(Exception e)
+            catch (Exception e)
             {
-                Error(e.Message);
+                Logger.Error(e.Message);
             }
         }
     }
