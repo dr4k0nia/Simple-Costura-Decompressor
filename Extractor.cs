@@ -53,10 +53,8 @@ namespace Costura_Decompressor
 
                 byte[] data = resource.GetData();
 
-                data.Decompress();
-
                 if (data != null)
-                    resources.Add(data, name);
+                    resources.Add(data.Decompress(), name);
 
                 Logger.Success($"Extracted costura resource {name}");
             }

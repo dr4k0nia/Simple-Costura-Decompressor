@@ -25,14 +25,14 @@ namespace Costura_Decompressor
                 @$"{module.Assembly.Name}-decompressed-resources\");
         }
 
-        public static void Decompress(this byte[] data)
+        public static byte[] Decompress(this byte[] data)
         {
             using var input = new MemoryStream(data);
             using var output = new MemoryStream();
             using var deflateStream = new DeflateStream(input, CompressionMode.Decompress);
             deflateStream.CopyTo(output);
 
-            output.ToArray();
+            return output.ToArray();
         }
 
         public static void ProcessCompressedFile(this string inputFile)
