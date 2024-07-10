@@ -25,7 +25,7 @@ namespace Costura_Decompressor
                 }
 
                 //Check if the file is an executable
-                if (Path.GetExtension(inputFile) == ".exe")
+                if (Path.GetExtension(inputFile) == ".exe" || Path.GetExtension(inputFile) == ".dll")
                 {
                     ProcessExecutable(inputFile);
                     continue;
@@ -38,7 +38,7 @@ namespace Costura_Decompressor
                     continue;
                 }
 
-                Logger.Error("Unsupported file extension, accepts .exe or .compressed");
+                Logger.Error("Unsupported file extension, accepts \".exe\". \".dll\" or \".compressed\"");
             }
 
             Console.ReadKey();
